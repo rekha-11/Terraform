@@ -10,8 +10,14 @@ resource "aws_instance" "web" {
   }
 
   provisioner "file" {
-    source      = "conf/myapp.conf"
-    destination = "/etc/myapp.conf"
+    source      = "readme.md" #terraform machine
+    destination = "/tmp/readme.md" #remote machine
+    connection {
+      type = "ssh"
+      user = "ubuntu"
+      private_key = file("${path.module}/id_rsa")
+      host = "${self.public_ip}"
+    }
   }
 
 }
