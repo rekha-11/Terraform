@@ -8,17 +8,27 @@ resource "aws_instance" "web" {
   tags = {
     Name = "firstinstance"
   }
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("${path.module}/id_rsa")
+    host        = "${self.public_ip}"
+  }
 
   provisioner "file" {
-    source      = "readme.md" #terraform machine
+    source      = "readme.md"      #terraform machine
     destination = "/tmp/readme.md" #remote machine
-    connection {
-      type = "ssh"
-      user = "ubuntu"
-      private_key = file("${path.module}/id_rsa")
-      host = "${self.public_ip}"
-    }
   }
+
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} > /tmp/publicip.txt"
+  }
+
+  # provisioner "local-exec" {
+  #   interpreter = [
+  #     "/usr/bin/python3", "-c"
+  #   ]
+  # }
 
 }
 
